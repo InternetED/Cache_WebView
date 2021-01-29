@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.text.TextUtils
+import android.util.Log
 import android.webkit.URLUtil
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -110,7 +111,7 @@ class WebViewCacheInterceptor(builder: Builder) : WebViewRequestInterceptor {
         if (mResourceInterceptor != null && !mResourceInterceptor.interceptor(url)) {
             return false
         }
-        if (url.contains(Regex(".*.ettoday.net"))){
+        if (url.contains(Regex(".*.ettoday.net"))) {
             return true
         }
 
@@ -195,7 +196,21 @@ class WebViewCacheInterceptor(builder: Builder) : WebViewRequestInterceptor {
             } else {
                 CacheWebViewLog.d(String.format("from server: %s", url), mDebug)
             }
-            val mimeType: String = MimeTypeMapUtils.getMimeTypeFromUrl(url)
+            val mimeType: String = MimeTypeMapUtils.getMimeTypeFromUrl(url).run {
+                if (this.isEmpty()) {
+                    val contentType = response.header("Content-Type", "") ?: ""
+                    val split = contentType.split(";")
+                    val mimeType =
+                        if (split.isNotEmpty()) {
+                            split[0]
+                        } else {
+                            ""
+                        }
+                    mimeType
+                } else {
+                    this
+                }
+            }
             val webResourceResponse =
                 WebResourceResponse(mimeType, "", response.body!!.byteStream())
             if (response.code == 504 && !NetUtils.isConnected(mContext)) {
