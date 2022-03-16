@@ -97,15 +97,15 @@ internal class AssetsLoader {
     }
 
     private fun addAssetsFile(file: String) {
-        var file = file
+        var newFile = file
         val flag = mDir + File.separator
         if (!TextUtils.isEmpty(mDir)) {
-            val pos = file.indexOf(flag)
+            val pos = newFile.indexOf(flag)
             if (pos >= 0) {
-                file = file.substring(pos + flag.length)
+                newFile = newFile.substring(pos + flag.length)
             }
         }
-        mAssetResSet!!.add(file)
+        mAssetResSet!!.add(newFile)
     }
 
     private fun initResourceNoneRecursion(dir: String?): AssetsLoader {

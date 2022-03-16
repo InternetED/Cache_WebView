@@ -1,6 +1,7 @@
 package com.interneted.cache_webview.utils
 
 import java.security.MessageDigest
+import java.util.*
 
 /**
  * Created by yale on 2017/9/22.
@@ -37,7 +38,7 @@ object MD5Utils {
             md5str.append(Integer.toHexString(digital))
         }
         return if (upperCase) {
-            md5str.toString().toUpperCase()
-        } else md5str.toString().toLowerCase()
+            md5str.toString().uppercase(Locale.getDefault())
+        } else md5str.toString().lowercase(Locale.getDefault())
     }
 }

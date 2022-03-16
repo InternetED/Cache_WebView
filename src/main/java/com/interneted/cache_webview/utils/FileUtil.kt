@@ -11,14 +11,14 @@ import java.io.OutputStream
  */
 object FileUtil {
     fun deleteDirs(path: String?, isDeleteDir: Boolean) {
-        if (TextUtils.isEmpty(path)) {
+        if (path == null || TextUtils.isEmpty(path)) {
             return
         }
         val dir = File(path)
         if (!dir.exists()) {
             return
         }
-        val files = dir.listFiles()
+        val files = dir.listFiles() ?: return
         for (file in files) {
             if (file.isDirectory) {
                 deleteDirs(file.absolutePath, isDeleteDir)
@@ -34,7 +34,7 @@ object FileUtil {
     @Throws(IOException::class)
     fun copy(inputStream: InputStream, out: OutputStream) {
         val buf = ByteArray(512)
-        var len = -1
+        var len: Int
         while (inputStream.read(buf).also { len = it } != -1) {
             out.write(buf, 0, len)
         }

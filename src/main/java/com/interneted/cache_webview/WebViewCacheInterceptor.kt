@@ -4,7 +4,6 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.text.TextUtils
-import android.util.Log
 import android.webkit.URLUtil
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -13,12 +12,14 @@ import com.interneted.cache_webview.utils.FileUtil
 import com.interneted.cache_webview.utils.MimeTypeMapUtils
 import com.interneted.cache_webview.utils.NetUtils
 import com.interneted.cache_webview.utils.OKHttpFile
-import okhttp3.*
+import okhttp3.Cache
 import okhttp3.CacheControl.Companion.FORCE_CACHE
+import okhttp3.Dns
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.X509TrustManager
@@ -49,7 +50,7 @@ class WebViewCacheInterceptor(builder: Builder) : WebViewRequestInterceptor {
     private var mReferer: String? = ""
     private var mUserAgent = ""
     private val isEnableAssets: Boolean
-        private get() = mAssetsDir != null
+        get() = mAssetsDir != null
 
     private fun initAssetsLoader() {
 
@@ -216,19 +217,19 @@ class WebViewCacheInterceptor(builder: Builder) : WebViewRequestInterceptor {
             if (response.code == 504 && !NetUtils.isConnected(mContext)) {
                 return null
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                var message = response.message
-                if (TextUtils.isEmpty(message)) {
-                    message = "OK"
-                }
-                try {
-                    webResourceResponse.setStatusCodeAndReasonPhrase(response.code, message)
-                } catch (e: Exception) {
-                    return null
-                }
-                webResourceResponse.responseHeaders =
-                    NetUtils.multimapToSingle(response.headers.toMultimap())
+
+            var message = response.message
+            if (TextUtils.isEmpty(message)) {
+                message = "OK"
             }
+            try {
+                webResourceResponse.setStatusCodeAndReasonPhrase(response.code, message)
+            } catch (e: Exception) {
+                return null
+            }
+            webResourceResponse.responseHeaders =
+                NetUtils.multimapToSingle(response.headers.toMultimap())
+
             return webResourceResponse
         } catch (e: IOException) {
             e.printStackTrace()

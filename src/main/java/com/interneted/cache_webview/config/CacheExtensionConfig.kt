@@ -17,14 +17,14 @@ class CacheExtensionConfig {
         return if (NO_CACH.contains(extension)) {
             true
         } else no_cache.contains(
-            extension.toLowerCase(Locale.getDefault()).trim { it <= ' ' })
+            extension.lowercase(Locale.getDefault()).trim { it <= ' ' })
     }
 
     fun canCache(extension: String): Boolean {
         if (TextUtils.isEmpty(extension)) {
             return false
         }
-        val extension2 = extension.toLowerCase(Locale.getDefault()).trim { it <= ' ' }
+        val extension2 = extension.lowercase(Locale.getDefault()).trim { it <= ' ' }
         return if (STATIC.contains(extension2)) {
             true
         } else statics.contains(extension2)
@@ -44,11 +44,10 @@ class CacheExtensionConfig {
         if (TextUtils.isEmpty(extension)) {
             return false
         }
-        return if (extension.toLowerCase().contains("html") ||
-            extension.toLowerCase().contains("htm")
-        ) {
-            true
-        } else false
+        val extensionName = extension.lowercase(Locale.getDefault())
+
+        return extensionName.contains("html") ||
+                extensionName.contains("htm")
     }
 
     fun clearAll() {
@@ -112,14 +111,14 @@ class CacheExtensionConfig {
             if (TextUtils.isEmpty(extension)) {
                 return
             }
-            set.add(extension.replace(".", "").toLowerCase().trim { it <= ' ' })
+            set.add(extension.replace(".", "").lowercase(Locale.getDefault()).trim { it <= ' ' })
         }
 
         private fun remove(set: HashSet<String>, extension: String) {
             if (TextUtils.isEmpty(extension)) {
                 return
             }
-            set.remove(extension.replace(".", "").toLowerCase().trim { it <= ' ' })
+            set.remove(extension.replace(".", "").lowercase(Locale.getDefault()).trim { it <= ' ' })
         }
     }
 }
